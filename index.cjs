@@ -89,4 +89,4 @@ async function install(id, opts = {}) {
     .run()
 }
 
-module.exports = { install }
+module.exports = install
