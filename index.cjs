@@ -4,13 +4,14 @@ const appling = require('appling-native')
 const { ALIASES } = require('pear-aliases')
 const { encode, decode } = require('./utils')
 const { preflight } = require('./preflight')
-const html = require('./view.html')
+const viewHtml = require('./view.html')
 
 const WINDOW_HEIGHT = 548
 const WINDOW_WIDTH = 500
 
 async function install(id, opts = {}) {
-  const { platform = ALIASES.pear } = opts
+  const { platform = ALIASES.pear, name } = opts
+  const html = viewHtml.replaceAll('__name__', name || id)
 
   using lock = await preflight(id)
 
