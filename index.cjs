@@ -1,6 +1,7 @@
 const Thread = require('bare-thread')
 const { App, Screen, Window, WebView } = require('fx-native')
 const appling = require('appling-native')
+const hypercoreid = require('hypercore-id-encoding')
 const { ALIASES } = require('pear-aliases')
 const { encode, decode } = require('./utils')
 const { preflight } = require('./preflight')
@@ -10,7 +11,7 @@ const WINDOW_HEIGHT = 548
 const WINDOW_WIDTH = 500
 
 async function install(id, opts = {}) {
-  const { platform = ALIASES.pear, name } = opts
+  const { platform = hypercoreid.encode(ALIASES.pear), name } = opts
   const html = viewHtml.replaceAll('__name__', name || id)
 
   using lock = await preflight(id)
