@@ -1,5 +1,4 @@
 const prettyBytes = require('prettier-bytes')
-const { encode } = require('./utils')
 
 class Progress {
   constructor(app, stages = [1]) {
@@ -16,7 +15,7 @@ class Progress {
   _broadcast() {
     const bytes = this.stageBytes.reduce((sum, b) => sum + b, 0)
     this.app.broadcast(
-      encode({
+      JSON.stringify(msg)({
         type: 'download',
         data: {
           speed: this.speed,
