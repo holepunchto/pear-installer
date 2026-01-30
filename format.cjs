@@ -1,13 +1,5 @@
 const prettyBytes = require('prettier-bytes')
 
-function encode(msg) {
-  return JSON.stringify(msg)
-}
-
-function decode(msg) {
-  return JSON.parse(msg.toString())
-}
-
 function format(u) {
   if (u.drive?.core) {
     return {
@@ -26,4 +18,4 @@ function format(u) {
   }
 }
 
-module.exports = { encode, decode, format }
+module.exports = format

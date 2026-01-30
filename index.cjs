@@ -3,16 +3,15 @@ const { App, Screen, Window, WebView } = require('fx-native')
 const appling = require('appling-native')
 const hypercoreid = require('hypercore-id-encoding')
 const { ALIASES } = require('pear-aliases')
-const { encode, decode } = require('./utils')
 const { preflight } = require('./preflight')
-const viewHtml = require('./view.html')
+const view = require('./view.html.cjs')
 
 const WINDOW_HEIGHT = 548
 const WINDOW_WIDTH = 500
 
 async function install(id, opts = {}) {
   const { platform = hypercoreid.encode(ALIASES.pear), name } = opts
-  const html = viewHtml.replaceAll('__name__', name || id)
+  const html = view({ name: name || id })
 
   using lock = await preflight(id)
 
@@ -25,7 +24,7 @@ async function install(id, opts = {}) {
   const app = App.shared()
 
   let window
-  let view
+  let webview
 
   function onViewMessage(message) {
     const msg = message.toString()
@@ -34,7 +33,7 @@ async function install(id, opts = {}) {
         window.close()
         break
       case 'install':
-        app.broadcast(encode({ type: 'install' }))
+        app.broadcast(JSON.stringify({ type: 'install' }))
         break
       case 'launch': {
         lock.unlock()
@@ -47,19 +46,19 @@ async function install(id, opts = {}) {
   }
 
   function onWorkerMessage(message) {
-    const msg = decode(message)
+    const msg = JSON.parse(message)
     switch (msg.type) {
       case 'ready':
-        app.broadcast(encode({ type: 'config', data: config }))
+        app.broadcast(JSON.stringify({ type: 'config', data: config }))
         break
       case 'download':
-        view.postMessage({ type: 'progress', data: msg.data })
+        webview.postMessage({ type: 'progress', data: msg.data })
         break
       case 'complete':
-        view.postMessage({ type: 'state', state: 'complete' })
+        webview.postMessage({ type: 'state', state: 'complete' })
         break
       case 'error':
-        view.postMessage({ type: 'state', state: 'error' })
+        webview.postMessage({ type: 'state', state: 'error' })
         break
     }
   }
@@ -78,8 +77,8 @@ async function install(id, opts = {}) {
         { frame: false }
       )
 
-      view = new WebView(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
-      view.on('message', onViewMessage).loadHTML(html)
+      webview = new WebView(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+      webview.on('message', onViewMessage).loadHTML(html)
 
       window.appendChild(view)
       window.show()

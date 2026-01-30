@@ -10,7 +10,7 @@ const SLOW_TIMEOUT = 180000 // 3 minutes
 
 const html = String.raw
 
-module.exports = html`
+module.exports = (opts = {}) => html`
   <style>
     @font-face {
       font-family: 'Inter';
@@ -289,10 +289,10 @@ module.exports = html`
   <main>
     <header>${splash}</header>
     <article>
-      <h1 id="title">Welcome to __name__</h1>
+      <h1 id="title">Welcome to ${opts.name}</h1>
       <p id="message">Ready to start the installation. This will only take a moment.</p>
 
-      <button id="installBtn">Install __name__</button>
+      <button id="installBtn">Install ${opts.name}</button>
 
       <div id="status" class="status hidden">
         <div id="progress" class="progress"><div></div></div>
@@ -305,7 +305,7 @@ module.exports = html`
           <button id="retryBtn">Retry installation</button>
         </div>
         <button id="launchBtn" class="hidden" style="margin-top: 1.125rem; margin-bottom: 0;">
-          Launch __name__
+          Launch ${opts.name}
         </button>
       </div>
     </article>
@@ -408,17 +408,17 @@ module.exports = html`
 
       switch (state) {
         case 'installing':
-          title.textContent = 'Welcome to __name__'
+          title.textContent = 'Welcome to ${opts.name}'
           message.textContent = 'It will launch once it is done.'
           break
         case 'slow':
-          title.textContent = 'Welcome to __name__'
+          title.textContent = 'Welcome to ${opts.name}'
           message.textContent = 'It will launch once it is done.'
           warning.textContent = "It's taking a bit of time, please check your connection."
           warning.classList.remove('hidden')
           break
         case 'error':
-          title.textContent = 'Welcome to __name__'
+          title.textContent = 'Welcome to ${opts.name}'
           message.textContent = 'It will launch once it is done.'
           progress.classList.add('red')
           warning.textContent = "Installation didn't complete."
@@ -430,10 +430,10 @@ module.exports = html`
           title.textContent = 'Installation complete!'
           progress.classList.add('complete')
           if (AUTO_LAUNCH) {
-            message.textContent = '__name__ app will launch shortly'
+            message.textContent = '${opts.name} app will launch shortly'
             setTimeout(() => bridge.postMessage('launch'), 500)
           } else {
-            message.textContent = '__name__ is ready to launch.'
+            message.textContent = '${opts.name} is ready to launch.'
             launchBtn.classList.remove('hidden')
           }
           break

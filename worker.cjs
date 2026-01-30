@@ -1,7 +1,7 @@
 const { App } = require('fx-native')
 const bootstrap = require('pear-updater-bootstrap')
 const appling = require('appling-native')
-const { encode, decode, format } = require('./utils')
+const format = require('./format')
 const { Progress } = require('./progress')
 
 const app = App.shared()
@@ -44,17 +44,17 @@ async function install() {
       progress.update(format(u), 1) // stage = 1
     })
     progress.complete()
-    app.broadcast(encode({ type: 'complete' }))
+    app.broadcast(JSON.stringify({ type: 'complete' }))
   } catch (e) {
     console.error('Bootstrap error: %o', e)
-    app.broadcast(encode({ type: 'error', error: e.message }))
+    app.broadcast(JSON.stringify({ type: 'error', error: e.message }))
   } finally {
     clearInterval(bootstrapInterval)
   }
 }
 
 app.on('message', async (message) => {
-  const msg = decode(message)
+  const msg = JSON.parse(message)
   switch (msg.type) {
     case 'config':
       setup(msg.data)
@@ -65,4 +65,4 @@ app.on('message', async (message) => {
   }
 })
 
-app.broadcast(encode({ type: 'ready' }))
+app.broadcast(JSON.stringify({ type: 'ready' }))
