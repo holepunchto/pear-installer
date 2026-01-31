@@ -15,7 +15,7 @@ class Progress {
   _broadcast() {
     const bytes = this.stageBytes.reduce((sum, b) => sum + b, 0)
     this.app.broadcast(
-      JSON.stringify(msg)({
+      JSON.stringify({
         type: 'download',
         data: {
           speed: this.speed,
