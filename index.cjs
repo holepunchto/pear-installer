@@ -80,7 +80,7 @@ async function install(id, opts = {}) {
       webview = new WebView(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
       webview.on('message', onViewMessage).loadHTML(html)
 
-      window.appendChild(view)
+      window.appendChild(webview)
       window.show()
     })
     .on('terminate', () => {
